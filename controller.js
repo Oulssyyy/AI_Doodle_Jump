@@ -7,12 +7,12 @@ export default class Controller {
         this._fps           = 60; // Frame rate.
         this._frameDuration = 1000 / this._fps; // Avec 60 frame par seconde, la frame va durer 16.7ms.
 
-        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model._score));
+        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
         this._view.BindSetDirection(this.SetDirection.bind(this));
     }
 
     Display(position, platforms, score) {
-        this._view.Display(position, platforms, score);
+        this._view.Display(position, platforms, this._model.score);
     }
 
     SetDirection(newDirection) {

@@ -48,7 +48,6 @@ export default class View {
 
     Display(position, platforms, score) {
 
-        //console.log('sigma: ' + score);
         const img = new Image();
         img.src = './assets/skibidi.png';        
         

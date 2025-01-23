@@ -8,7 +8,6 @@ export default class Model {
     static PLAYER_HEIGHT = 25;
     static MIN_PLAYER_Y = 250;
     static MIN_Y_PLATFORM_BUFFER = -1000;
-    static PLATFORM_WIDTH = 80;
 
     constructor() {
         this._direction = 0;                
@@ -53,15 +52,17 @@ export default class Model {
 
         while (currentYGeneration > Model.MIN_Y_PLATFORM_BUFFER) {
             let nextY = currentYGeneration - randMinMax(defaultGenRange.min, defaultGenRange.max);
-            let nextX = randMinMax(0, 300 - 100);
             
-            let nextPlatform = { x: nextX, y: nextY, height: 15, width: Model.PLATFORM_WIDTH,  type: Math.random() > 0.75 ? Math.random() > 0.5 ? 'moving' : 'oneTime' : 'basic' };
+            let platformWidth = randMinMax(30,80);
+            let nextX = randMinMax(0, 300 - platformWidth);
+
+            let nextPlatform = { x: nextX, y: nextY, height: 10, width: platformWidth,  type: Math.random() > 0.75 ? Math.random() > 0.5 ? 'moving' : 'oneTime' : 'basic' };
 
             if(nextPlatform.type == 'moving') {
-                nextPlatform.from = randMinMax(0, 200 - Model.PLATFORM_WIDTH);
-                nextPlatform.to = randMinMax(nextPlatform.from, 300 - Model.PLATFORM_WIDTH);
-                nextPlatform.speed = randMinMax(50, 100) / 100;
-                nextPlatform.direction = 1;
+                nextPlatform.from = randMinMax(0, 200 - platformWidth);
+                nextPlatform.to = randMinMax(nextPlatform.from, 300 - platformWidth);
+                nextPlatform.speed = randMinMax(50, 200) / 100;
+                nextPlatform.direction = Math.random() > 0.5 ? 1 : -1;
             }
 
             this._platforms.push(nextPlatform);
@@ -122,7 +123,7 @@ export default class Model {
         if (this._position.y < Model.MIN_PLAYER_Y) {
             let delta = Model.MIN_PLAYER_Y - this._position.y;
             this._position.y += delta;
-            this._score += Math.round(delta);
+            this._score += Math.round(delta / 10);
             for (let platform of this._platforms) {
                 platform.y += delta;
             }
@@ -138,11 +139,15 @@ export default class Model {
 
         if (this._position.y > 600) {
             // Player loses the game
-            alert("Perdu ! Skibidi toilet score : " + this._score);
+            if (confirm("Perdu ! Skibidi toilet score : " + this._score + ". Click OK to restart.")) {
+                location.reload();
+            }
             this._position = { x: 0, y: 0 };
             this._gravitySpeed = 0;
             this._direction = 0;
             this._platforms = [{ x: 0, y: 300, height: 20, width: 300, type: 'basic' }];
+            this._score = 0;
+        
         }
         
 
