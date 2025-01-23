@@ -44,13 +44,16 @@ export default class Model {
         let defaultGenRange = { min: 50, max: 200 }
 
         while (currentYGeneration > Model.MIN_Y_PLATFORM_BUFFER) {
-            let nextY = currentYGeneration + randMinMax(defaultGenRange.min, defaultGenRange.max);
-            let nextX = randMinMax(0, 300 - Model.PLAYER_WIDTH);
+            let nextY = currentYGeneration - randMinMax(defaultGenRange.min, defaultGenRange.max);
+            let nextX = randMinMax(0, 300 - 100);
             
             let nextPlatform = { x: nextX, y: nextY, height: 20, width: 100,  type: 'basic' };
             this._platforms.push(nextPlatform);
             currentYGeneration = nextY;
         }
+
+        console.log('done');
+        
 
     }
     isOnPlatform() {
@@ -79,6 +82,7 @@ export default class Model {
 
     Move(fps) {
         this._gravitySpeed += Model.GRAVITY;
+
         this._position.y += this._gravitySpeed / fps;
 
         if (this._position.y < Model.MIN_PLAYER_Y) {
@@ -90,6 +94,13 @@ export default class Model {
         }
 
         this._position.x += this._direction * Model.SPEED / fps;
+
+        if (this._position.x >= 300) {
+            this._position.x = 0;
+        } else if (this._position.x + Model.PLAYER_WIDTH <= 0) {
+            this._position.x = 300 - Model.PLAYER_WIDTH;
+        }
+
         this._isFalling = this._gravitySpeed > 0;
 
         if (this._position.y > 600) {

@@ -1,0 +1,42 @@
+/* Style général */
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.btn {
+    border: 1px solid green;
+    cursor: pointer;
+}
+
+#mute-btn {
+    position: absolute;
+    left: 110%;
+    top: 20px;
+}
+
+#mute-btn.muted {
+    text-decoration: line-through;
+}
+
+/* Canvas */
+canvas {
+    border: 1px solid red;
+}
