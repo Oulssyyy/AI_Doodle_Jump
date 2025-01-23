@@ -46,23 +46,18 @@ export default class View {
         });
     }
 
-    Display(position) {
+    Display(position, platforms) {
         let x = position.x;
         let y = position.y;
         
         this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-        // Dessiner les lignes.
-        this.ctx.beginPath(); // Nouveau tracé.
-        this.ctx.moveTo(100, 0); // Déplacement du crayon en (100, 0).
-        this.ctx.lineTo(100, 100); // Dessiner la ligne en (150, 100).
-        this.ctx.stroke(); // Afficher la ligne.
-        this.ctx.beginPath(); // Nouveau tracé.
-        this.ctx.moveTo(0, 100); // Déplacement du crayon en (100, 0).
-        this.ctx.lineTo(100, 100); // Dessiner la ligne en (150, 100).
-        this.ctx.stroke(); // Afficher la ligne.
         
         // Dessiner un rectangle plein.
         this.ctx.fillRect(x, y, 10, 10);
+
+        for(let i = 0; i < platforms.length; i++) {
+            this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
+        }
+        
     }
 }
