@@ -12,6 +12,8 @@
     <div class="container">
         <canvas id="my_canvas" width="300" height="600"></canvas>
         <div class="btn" id="play-btn">Play</div>
+
+        <div class="btn" id="mute-btn">Mute</div>
     </div>
 
     <script defer type="module">
@@ -19,9 +21,22 @@
         import Model from './model.js'
         import View from './vue.js'
 
-        const audio = document.getElementById('ost-secret')
+        const audio = document.getElementById('ost-secret');
+        const muteBtn = document.getElementById('mute-btn');
+        const playBtn = document.getElementById('play-btn');
+
+        muteBtn.addEventListener('click', () => {
+            muteBtn.classList.toggle('muted');
+
+            if (muteBtn.classList.contains('muted')) {
+                audio.volume = 0;
+            } else {
+                audio.volume = 1;
+            }
+        })
+
         const app = new Controller(new Model(), new View());
-        document.getElementById('play-btn').addEventListener('click', () => {
+        playBtn.addEventListener('click', () => {
             app.Update();
             audio.play();
         })

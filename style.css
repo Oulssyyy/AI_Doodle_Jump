@@ -12,6 +12,8 @@ body {
 }
 
 .container {
+    position: relative;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -21,6 +23,17 @@ body {
 
 .btn {
     border: 1px solid green;
+    cursor: pointer;
+}
+
+#mute-btn {
+    position: absolute;
+    left: 110%;
+    top: 20px;
+}
+
+#mute-btn.muted {
+    text-decoration: line-through;
 }
 
 /* Canvas */
