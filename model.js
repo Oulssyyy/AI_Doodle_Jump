@@ -4,8 +4,8 @@ export default class Model {
     static GRAVITY    = 20;
     static JUMP_FORCE = 800;
     static SPEED      = 200;
-    static PLAYER_WIDTH = 10;
-    static PLAYER_HEIGHT = 10;
+    static PLAYER_WIDTH = 34;
+    static PLAYER_HEIGHT = 25;
     static MIN_PLAYER_Y = 250;
     static MIN_Y_PLATFORM_BUFFER = -1000;
 
@@ -14,9 +14,7 @@ export default class Model {
         this._gravitySpeed = 0;
         this._position = {x: 0, y:0};
         this._platforms = [
-            { x: 50, y: 50, height: 20, width: 100,  type: 'basic' },
-            { x: 200, y: 400, height: 20, width: 100,  type: 'oneTime' },
-            { x: 100, y: 300, height: 20, width: 100,  type: 'moving', from: 400, to: 600, speed: 50 },
+            { x: 0, y: 300, height: 20, width: 300,  type: 'basic' },
         ];
     }
 
@@ -47,19 +45,43 @@ export default class Model {
             let nextY = currentYGeneration - randMinMax(defaultGenRange.min, defaultGenRange.max);
             let nextX = randMinMax(0, 300 - 100);
             
-            let nextPlatform = { x: nextX, y: nextY, height: 20, width: 100,  type: 'basic' };
+            let nextPlatform = { x: nextX, y: nextY, height: 15, width: 80,  type: Math.random() > 0.75 ? Math.random() > 0.5 ? 'moving' : 'oneTime' : 'basic' };
+
+            if(nextPlatform.type == 'moving') {
+                nextPlatform.from = Math.max(nextX, 1);
+                nextPlatform.to = Math.min(nextX + 100, 300 - 80);
+                nextPlatform.speed = 0.8;
+                nextPlatform.direction = 1;
+            }
+
             this._platforms.push(nextPlatform);
             currentYGeneration = nextY;
         }
 
-        console.log('done');
-        
-
     }
+
+    UpdatePlatforms(fps) {
+        for (let i = 0; i < this._platforms.length; i++) {
+            if(this._platforms[i].type == 'moving') {
+
+                if(this._platforms[i].x >= this._platforms[i].to) {
+                    this._platforms[i].x += this._platforms[i].speed *-1;
+                    this._platforms[i].direction = -1;
+                } else if(this._platforms[i].x <= this._platforms[i].from) {
+                    this._platforms[i].x += this._platforms[i].speed;
+                    this._platforms[i].direction = 1;
+                } else {
+                    this._platforms[i].x += this._platforms[i].speed * this._platforms[i].direction;
+                }
+            }
+        }
+    }
+
+
     isOnPlatform() {
         for (let i = 0; i < this._platforms.length; i++) {
             if (
-                this._position.x + Model.PLAYER_WIDTH >= this._platforms[i].x && 
+                this._position.x + Model.PLAYER_HEIGHT >= this._platforms[i].x && 
                 this._position.x <= this._platforms[i].x + this._platforms[i].width
             ) {
                 if(this._position.y + Model.PLAYER_WIDTH >= this._platforms[i].y &&
@@ -81,6 +103,8 @@ export default class Model {
     }
 
     Move(fps) {
+
+        this.UpdatePlatforms(fps);
         this._gravitySpeed += Model.GRAVITY;
 
         this._position.y += this._gravitySpeed / fps;
@@ -104,13 +128,17 @@ export default class Model {
         this._isFalling = this._gravitySpeed > 0;
 
         if (this._position.y > 600) {
-            this._Jump();
+            // Player loses the game
+            alert("Game Over!");
+            this._position = { x: 0, y: 0 };
+            this._gravitySpeed = 0;
+            this._direction = 0;
+            this._platforms = [{ x: 0, y: 300, height: 20, width: 300, type: 'basic' }];
         }
         
 
         if(this._isFalling && this.isOnPlatform(this)) {
             this._Jump();
-            console.log('On platform');
         }
 
         if (this._platforms[this._platforms.length - 1].y > -100) {

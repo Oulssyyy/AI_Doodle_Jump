@@ -4,7 +4,7 @@ export default class View {
         this.ctx     = this._canvas.getContext('2d');
         this._hold_right = false;
         this._hold_left = false;
-
+        this.imageDirection = 1;
         this.Events();
     }
 
@@ -47,17 +47,50 @@ export default class View {
     }
 
     Display(position, platforms) {
-        let x = position.x;
-        let y = position.y;
-        
-        this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        const img = new Image();
+        img.src = './assets/skibidi.png';        
         
         // Dessiner un rectangle plein.
-        this.ctx.fillRect(x, y, 10, 10);
+        //this.ctx.fillRect(x, y, 10, 10);
+        
+        img.onload = () => {
 
-        for(let i = 0; i < platforms.length; i++) {
-            this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
-        }
+            let x = position.x;
+            let y = position.y;
+        
+            this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+            for(let i = 0; i < platforms.length; i++) {
+                if(platforms[i].type == 'oneTime')
+                    this.ctx.fillStyle = 'red';
+                else if(platforms[i].type == 'basic')
+                    this.ctx.fillStyle = 'black';
+                else if(platforms[i].type == 'moving')
+                    this.ctx.fillStyle = 'blue';
+                this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
+            }
+
+            if(this._hold_right && !this._hold_left && this.imageDirection != 1) {
+                this.imageDirection = 1;
+            } else if(this._hold_left && !this._hold_right && this.imageDirection != -1) {
+                this.imageDirection = -1;
+            }
+
+
+
+            if (this.imageDirection == -1) {
+                this.ctx.save();
+                this.ctx.scale(-1, 1);
+                this.ctx.drawImage(img, -x - 25, y, 25, 34);
+                this.ctx.restore();
+                this.image
+
+            } else {
+                this.ctx.drawImage(img, x, y, 25, 34);
+            }
+        };
+
+        
         
     }
 }
