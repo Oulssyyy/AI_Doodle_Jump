@@ -1,0 +1,29 @@
+/* Style général */
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.btn {
+    border: 1px solid green;
+}
+
+/* Canvas */
+canvas {
+    border: 1px solid red;
+}

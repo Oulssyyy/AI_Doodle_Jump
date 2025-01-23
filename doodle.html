@@ -4,17 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doodle</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
-<body style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <canvas id="my_canvas" width="300" height="600" style="border: 1px solid red"></canvas>
+<body>
+    <audio id="ost-secret" src="./assets/song/ost-secret.mp3" loop></audio>
 
-    <script type="module">
+    <div class="container">
+        <canvas id="my_canvas" width="300" height="600"></canvas>
+        <div class="btn" id="play-btn">Play</div>
+    </div>
+
+    <script defer type="module">
         import Controller from './controller.js'
         import Model from './model.js'
         import View from './vue.js'
 
+        const audio = document.getElementById('ost-secret')
         const app = new Controller(new Model(), new View());
-        app.Update();
+        document.getElementById('play-btn').addEventListener('click', () => {
+            app.Update();
+            audio.play();
+        })
     </script>
 </body>
 </html>
