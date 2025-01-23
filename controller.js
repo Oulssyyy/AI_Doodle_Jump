@@ -2,18 +2,17 @@ export default class Controller {
     constructor(model, view) {
         this._model = model;
         this._view = view;
-        
         this._startTime     = Date.now();
         this._lag           = 0;
         this._fps           = 60; // Frame rate.
         this._frameDuration = 1000 / this._fps; // Avec 60 frame par seconde, la frame va durer 16.7ms.
 
-        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.direction));
+        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model._score));
         this._view.BindSetDirection(this.SetDirection.bind(this));
     }
 
-    Display(position, platforms, direction) {
-        this._view.Display(position, platforms, direction);
+    Display(position, platforms, score) {
+        this._view.Display(position, platforms, score);
     }
 
     SetDirection(newDirection) {

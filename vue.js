@@ -46,7 +46,9 @@ export default class View {
         });
     }
 
-    Display(position, platforms) {
+    Display(position, platforms, score) {
+
+        //console.log('sigma: ' + score);
         const img = new Image();
         img.src = './assets/skibidi.png';        
         
@@ -57,6 +59,8 @@ export default class View {
 
             let x = position.x;
             let y = position.y;
+
+            
         
             this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
@@ -88,6 +92,10 @@ export default class View {
             } else {
                 this.ctx.drawImage(img, x, y, 25, 34);
             }
+
+            this.ctx.font = '20px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.fillText('Sigma: ' + score, 10, 30);
         };
 
         
