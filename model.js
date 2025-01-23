@@ -39,8 +39,13 @@ export default class Model {
             ) {
                 if(this._position.y + Model.PLAYER_WIDTH >= this._platforms[i].y &&
                     this._position.y + Model.PLAYER_WIDTH <= this._platforms[i].y + this._platforms[i].height
-                ) 
+                ){
+                    if(this._platforms[i].type == 'oneTime') {
+                        this._platforms.splice(i, 1);
+                        return true;
+                    }
                     return true;
+                }
             }
         }
         return false;
