@@ -38,3 +38,15 @@ export default class Controller {
         requestAnimationFrame(this.Update.bind(this)); // La fonction de rappel est généralement appelée 60 fois par seconde.
     }
 }
+
+export class AIController extends Controller {
+    constructor(model, view, bot) {
+        super(model, view)
+        this.bot = bot;
+    }
+
+    Update() {
+        this.bot.MakeDecision(model);
+        super.Update();
+    }
+}
