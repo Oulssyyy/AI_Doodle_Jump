@@ -11,7 +11,9 @@
 
     <div class="container">
         <canvas id="my_canvas" width="300" height="600"></canvas>
-        <div class="btn" id="play-btn">Play</div>
+        <div class="btn" id="play-btn">
+            Play
+        </div>
 
         <div class="btn" id="mute-btn">Mute</div>
     </div>
@@ -35,6 +37,14 @@
             'test3',
             'yagami'
         ]) + '.mp3';
+        
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.get('mode') === 'china') {
+            console.log('china');
+            audio.src = './assets/song/ost-mao.mp3';
+            playBtn.textContent = '播放';
+        }
 
         muteBtn.addEventListener('click', () => {
             muteBtn.classList.toggle('muted');
