@@ -11,7 +11,9 @@
 
     <div class="container">
         <canvas id="my_canvas" width="300" height="600"></canvas>
-        <div class="btn" id="play-btn">Play</div>
+        <div class="btn" id="play-btn">
+            Play
+        </div>
 
         <div class="btn" id="mute-btn">Mute</div>
     </div>
@@ -24,6 +26,15 @@
         const audio = document.getElementById('ost-secret');
         const muteBtn = document.getElementById('mute-btn');
         const playBtn = document.getElementById('play-btn');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const audioElement = document.getElementById('ost-secret');
+
+        if (urlParams.get('mode') === 'china') {
+            console.log('china');
+            audioElement.src = './assets/song/ost-mao.mp3';
+            playBtn.textContent = '播放';
+        }
 
         muteBtn.addEventListener('click', () => {
             muteBtn.classList.toggle('muted');

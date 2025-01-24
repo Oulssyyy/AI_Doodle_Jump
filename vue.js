@@ -6,6 +6,8 @@ export default class View {
         this._hold_left = false;
         this.imageDirection = 1;
         this.Events();
+        this.lowestPosition = 1000
+        this.maxPosition = 0;
     }
 
     BindSetDirection(callback) {
@@ -48,26 +50,58 @@ export default class View {
 
     Display(position, platforms, score) {
 
-        const img = new Image();
-        img.src = './assets/skibidi.png';        
         
-        // Dessiner un rectangle plein.
-        //this.ctx.fillRect(x, y, 10, 10);
-        
-        img.onload = () => {
+        // this.lowestPosition = Math.min(this.lowestPosition, position.y);
+        // this.maxPosition = Math.max(this.maxPosition, position.y);
+        // console.log('position:', this.lowestPosition, this.maxPosition);
 
+        const img = new Image();
+        img.src = './assets/skibidi.png'; 
+
+        const img2 = new Image();
+        img2.src = './assets/social_credit_up.png';
+
+        const background = new Image();
+        background.src = './assets/night_sky.png';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'china') {
+            img.src = './assets/mao.png';
+            background.src = './assets/chinese_sky.jpg';
+        }
+        
+        
+
+        const basicPlatform = new Image();
+        const oneTimePlatform = new Image();
+        const movingPlatform = new Image();
+
+        Promise.all([img.decode(), img2.decode(), background.decode()]).then(() => {
             let x = position.x;
             let y = position.y;
-
-            
         
             this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+            const scrollSpeed = score * 0.001; // Adjust the scroll speed as needed
+            const backgroundY = (score + scrollSpeed) % this._canvas.height;
+
+            this.ctx.drawImage(background, 0, backgroundY, this._canvas.width, this._canvas.height);
+            if (backgroundY > 0) {
+                this.ctx.drawImage(background, 0, backgroundY - this._canvas.height, this._canvas.width, this._canvas.height);
+            } else {
+                this.ctx.drawImage(background, 0, backgroundY + this._canvas.height, this._canvas.width, this._canvas.height);
+            }
+            
+            this.ctx.drawImage(background, 0, backgroundY, this._canvas.width, this._canvas.height);
+            if (backgroundY < 0) {
+                this.ctx.drawImage(background, 0, backgroundY + this._canvas.height, this._canvas.width, this._canvas.height);
+            }
 
             for(let i = 0; i < platforms.length; i++) {
                 if(platforms[i].type == 'oneTime')
                     this.ctx.fillStyle = 'red';
                 else if(platforms[i].type == 'basic')
-                    this.ctx.fillStyle = 'black';
+                    this.ctx.fillStyle = 'white';
                 else if(platforms[i].type == 'moving')
                     this.ctx.fillStyle = 'blue';
                 this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
@@ -92,12 +126,22 @@ export default class View {
                 this.ctx.drawImage(img, x, y, 25, 34);
             }
 
-            this.ctx.font = '20px Arial';
-            this.ctx.fillStyle = 'black';
-            this.ctx.fillText('Sigma: ' + score, 10, 30);
-        };
+            if (urlParams.get('mode') === 'china'){
+                this.ctx.drawImage(img2, 220, 5, 70, 40);
+                this.ctx.font = '20px Arial';
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillText('社会信用: ' + score, 10, 30);
+            }
+            else{
+                this.ctx.font = '20px Arial';
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillText('Sigma: ' + score, 10, 30);
+            }
 
-        
+            
+        }).catch((error) => {
+            console.error('Error loading images:', error);
+        });        
         
     }
 }
