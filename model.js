@@ -58,7 +58,7 @@ export default class Model {
             let platformWidth = 60;
             let nextX = randMinMax(0, 300 - platformWidth);
     
-            let nextPlatform = { x: nextX, y: nextY, height: 10, width: platformWidth };
+            let nextPlatform = { x: nextX, y: nextY, height: 13, width: platformWidth };
     
             nextPlatform.type = Math.random() > typeProbability ? (Math.random() > 0.5 ? 'moving' : 'oneTime') : 'basic';
     
@@ -143,7 +143,12 @@ export default class Model {
 
         if (this._position.y > 600) {
             // Player loses the game
-            if (confirm("Perdu ! Skibidi toilet sigma score : " + this._score + ". Click OK to restart.")) {
+            const urlParams = new URLSearchParams(window.location.search);
+            let text = "Perdu ! Skibidi toilet sigma score : " + this._score + ". Click OK to restart."
+            if(urlParams.get('mode') === 'china'){
+                text = "失败了！社会信用：" + this._score + "。点击确定重新开始。"
+            }
+            if (confirm(text)) {
                 location.reload();
             }
             this._position = { x: 0, y: 0 };
