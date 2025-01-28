@@ -12,7 +12,7 @@ export default class Model {
     constructor() {
         this._direction = 0;                
         this._gravitySpeed = 0;
-        this._position = {x: 0, y:0};
+        this._position = {x: 0, y:300};
         this._platforms = [
             { x: 0, y: 300, height: 50, width: 300,  type: 'basic' },
         ];
@@ -48,8 +48,10 @@ export default class Model {
     
         let currentYGeneration = this._platforms[this._platforms.length - 1].y;
     
-        let difficulty = Math.floor(this._score / 100);
-        let defaultGenRange = { min: Math.min(230, 50 + difficulty), max: 250 };
+        let difficulty = this._score / 10000;
+        let x = difficulty*10;
+        let defaultGenRange = { min: Math.min(230, 20 + difficulty*10), max: Math.min(250, Math.max(100, (x^(3/2))+100)) };
+        console.log('difficulty : ', difficulty,  'genrange :',defaultGenRange);
         let typeProbability = Math.max(0.1, 0.75 - difficulty * 0.1);
     
         while (currentYGeneration > Model.MIN_Y_PLATFORM_BUFFER) {
@@ -58,7 +60,7 @@ export default class Model {
             let platformWidth = 60;
             let nextX = randMinMax(0, 300 - platformWidth);
     
-            let nextPlatform = { x: nextX, y: nextY, height: 13, width: platformWidth };
+            let nextPlatform = { x: nextX, y: nextY, height: 15, width: platformWidth };
     
             nextPlatform.type = Math.random() > typeProbability ? (Math.random() > 0.5 ? 'moving' : 'oneTime') : 'basic';
     
@@ -127,7 +129,7 @@ export default class Model {
         if (this._position.y < Model.MIN_PLAYER_Y) {
             let delta = Model.MIN_PLAYER_Y - this._position.y;
             this._position.y += delta;
-            this._score += Math.round(delta / 10);
+            this._score += Math.round(delta);
             for (let platform of this._platforms) {
                 platform.y += delta;
             }
@@ -149,13 +151,10 @@ export default class Model {
                 text = "失败了！社会信用：" + this._score + "。点击确定重新开始。"
             }
             if (confirm(text)) {
-                location.reload();
+                this.Restart();
             }
-            this._position = { x: 0, y: 0 };
-            this._gravitySpeed = 0;
-            this._direction = 0;
-            this._platforms = [{ x: 0, y: 300, height: 20, width: 300, type: 'basic' }];
-            this._score = 0;
+
+
         
         }
         
@@ -173,5 +172,14 @@ export default class Model {
 
     _Jump() {
         this._gravitySpeed = -Model.JUMP_FORCE;
+    }
+
+    Restart() {
+        console.log('Restart Model');
+        this._position = { x: 0, y: 300 };
+        this._gravitySpeed = 40;
+        this._direction = 0;
+        this._platforms = [{ x: 0, y: 300, height: 50, width: 300, type: 'basic' }];
+        this._score = 0;
     }
 }

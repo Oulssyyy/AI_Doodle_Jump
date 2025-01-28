@@ -6,8 +6,6 @@ export class View {
         this._hold_left = false;
         this.imageDirection = 1;
         this.Events();
-        this.lowestPosition = 1000
-        this.maxPosition = 0;
     }
 
     BindSetDirection(callback) {
@@ -48,12 +46,27 @@ export class View {
         });
     }
 
-    Display(position, platforms, score) {
+    renderBackground(background, score) {
 
+        const scrollSpeed = score * 0.001; // Adjust the scroll speed as needed
+        const backgroundY = (score + scrollSpeed) % this._canvas.height;
+
+        this.ctx.drawImage(background, 0, backgroundY, this._canvas.width, this._canvas.height);
+        if (backgroundY > 0) {
+            this.ctx.drawImage(background, 0, backgroundY - this._canvas.height, this._canvas.width, this._canvas.height);
+        } else {
+            this.ctx.drawImage(background, 0, backgroundY + this._canvas.height, this._canvas.width, this._canvas.height);
+        }
         
-        // this.lowestPosition = Math.min(this.lowestPosition, position.y);
-        // this.maxPosition = Math.max(this.maxPosition, position.y);
-        // console.log('position:', this.lowestPosition, this.maxPosition);
+        this.ctx.drawImage(background, 0, backgroundY, this._canvas.width, this._canvas.height);
+        if (backgroundY < 0) {
+            this.ctx.drawImage(background, 0, backgroundY + this._canvas.height, this._canvas.width, this._canvas.height);
+        }
+    }
+
+    Display(position, platforms, score) {
+        // console.log('position:', position.y);
+        // console.log('platforms:', platforms);
 
         const img = new Image();
         img.src = './assets/skibidi.png'; 
@@ -73,38 +86,37 @@ export class View {
         
 
         const basicPlatform = new Image();
+        basicPlatform.src = './assets/normal_platform.png';
         const oneTimePlatform = new Image();
+        oneTimePlatform.src = './assets/oneTime_platform.png';
         const movingPlatform = new Image();
+        movingPlatform.src = './assets/moving_platform.png';
 
-        Promise.all([img.decode(), img2.decode(), background.decode()]).then(() => {
+        Promise.all([
+            img.decode(), 
+            img2.decode(), 
+            background.decode(), 
+            basicPlatform.decode(), 
+            oneTimePlatform.decode(), 
+            movingPlatform.decode()
+        ]).then(() => {
             let x = position.x;
             let y = position.y;
         
             this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-            const scrollSpeed = score * 0.001; // Adjust the scroll speed as needed
-            const backgroundY = (score + scrollSpeed) % this._canvas.height;
+            this.renderBackground(background, Math.floor(score / 10));
 
-            this.ctx.drawImage(background, 0, backgroundY, this._canvas.width, this._canvas.height);
-            if (backgroundY > 0) {
-                this.ctx.drawImage(background, 0, backgroundY - this._canvas.height, this._canvas.width, this._canvas.height);
-            } else {
-                this.ctx.drawImage(background, 0, backgroundY + this._canvas.height, this._canvas.width, this._canvas.height);
-            }
             
-            this.ctx.drawImage(background, 0, backgroundY, this._canvas.width, this._canvas.height);
-            if (backgroundY < 0) {
-                this.ctx.drawImage(background, 0, backgroundY + this._canvas.height, this._canvas.width, this._canvas.height);
-            }
 
             for(let i = 0; i < platforms.length; i++) {
                 if(platforms[i].type == 'oneTime')
-                    this.ctx.fillStyle = 'red';
+                    this.ctx.drawImage(oneTimePlatform, platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
                 else if(platforms[i].type == 'basic')
-                    this.ctx.fillStyle = 'white';
+                    this.ctx.drawImage(basicPlatform, platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
                 else if(platforms[i].type == 'moving')
-                    this.ctx.fillStyle = 'blue';
-                this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
+                    this.ctx.drawImage(movingPlatform, platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
+                //this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
             }
 
             if(this._hold_right && !this._hold_left && this.imageDirection != 1) {
@@ -141,7 +153,14 @@ export class View {
             
         }).catch((error) => {
             console.error('Error loading images:', error);
-        });        
+        });    
+        
+    }
+
+    Restart() {
+        console.log('Restart view');
+        this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        //this.ctx.clearCanvas();
         
     }
 }
