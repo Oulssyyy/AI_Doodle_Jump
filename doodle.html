@@ -14,6 +14,9 @@
         <div class="btn" id="play-btn">
             Play
         </div>
+        <div class="btn" id="restart-btn">
+            Restart
+        </div>
 
         <div class="btn" id="mute-btn">Mute</div>
     </div>
@@ -61,6 +64,11 @@
             app.Update();
             audio.play();
         })
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            app.Restart(new Model(), new View());
+        })
+
     </script>
 </body>
 </html>
