@@ -1,4 +1,4 @@
-export default class View {
+export class View {
     constructor() {
         this._canvas = document.getElementById('my_canvas');
         this.ctx     = this._canvas.getContext('2d');
@@ -143,5 +143,36 @@ export default class View {
             console.error('Error loading images:', error);
         });        
         
+    }
+}
+
+export class AIView extends View {
+    constructor(bot) {
+        super();
+        this.bot = bot;
+    }
+
+    Display(position, platforms, score) {
+        super.Display(position, platforms, score);
+
+        if (this.bot.fourClosestPlatforms == null) {
+            this.bot.FourClosestPlatforms();
+        }
+
+        console.log(this.bot.fourClosestPlatforms.length);
+        
+        this.ctx.lineWidth = 5;
+
+        for (let i = 0; i < this.bot.fourClosestPlatforms.length; i++) {
+            const platform = this.bot.fourClosestPlatforms[i];
+            if(platform === undefined) {
+                continue;
+            }
+            this.ctx.beginPath();
+            this.ctx.moveTo(position.x, position.y);
+            this.ctx.lineTo(platform.x, platform.y);
+            this.ctx.strokeStyle = [ 'red', 'yellow', 'blue', 'green' ][i];
+            this.ctx.stroke();
+        }
     }
 }

@@ -1,4 +1,4 @@
-export default class Controller {
+export class Controller {
     constructor(model, view) {
         this._model = model;
         this._view = view;
@@ -46,7 +46,8 @@ export class AIController extends Controller {
     }
 
     Update() {
-        this.bot.MakeDecision(model);
+        console.log(this);
+        this.bot.MakeDecision(this._model);
         super.Update();
     }
 }

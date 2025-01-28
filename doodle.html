@@ -19,23 +19,18 @@
     </div>
 
     <script defer type="module">
-        import Controller from './controller.js'
-        import Model from './model.js'
-        import View from './vue.js'
-        import randMinMax from './util.js'
+        import { Controller, AIController } from './controller.js';
+        import { Bot, NetworkLayer } from './ai.js';
+        import Model from './model.js';
+        import { View, AIView } from './vue.js';
+        import randMinMax from './util.js';
 
         const audio = document.getElementById('ost-secret');
         const muteBtn = document.getElementById('mute-btn');
         const playBtn = document.getElementById('play-btn');
 
         audio.src = './assets/song/' + ((t) => t[randMinMax(0, t.length - 1)])([
-            'ost-secret',
-            'ost-secret-2',
-            'test1',
-            'test2',
-            'money',
-            'test3',
-            'yagami'
+            'ost-op'
         ]) + '.mp3';
         
         const urlParams = new URLSearchParams(window.location.search);
@@ -56,7 +51,11 @@
             }
         })
 
-        const app = new Controller(new Model(), new View());
+        const model = new Model();
+        const bot = new Bot(model);
+
+
+        const app = new AIController(model, new AIView(bot), bot);
         playBtn.addEventListener('click', () => {
             app.Update();
             audio.play();
