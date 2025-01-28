@@ -1,13 +1,19 @@
+import Model from './model.js';
+import { View, AIView } from './vue.js';
+import { Bot, NetworkLayer } from './ai.js';
+
+
 export class Controller {
     constructor(model, view) {
-        this._model = model;
-        this._view = view;
+        this._model = model || new Model();
+        this._view = view || new View();
         this._startTime     = Date.now();
         this._lag           = 0;
         this._fps           = 60; // Frame rate.
         this._frameDuration = 1000 / this._fps; // Avec 60 frame par seconde, la frame va durer 16.7ms.
 
         this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
+        this._model.BindRestart(this.Restart.bind(this));
         this._view.BindSetDirection(this.SetDirection.bind(this));
     }
 
@@ -38,15 +44,7 @@ export class Controller {
         requestAnimationFrame(this.Update.bind(this)); // La fonction de rappel est généralement appelée 60 fois par seconde.
     }
 
-    Restart(model, view){
-        console.log("Restarting game");
-        this._model = model;
-        this._view = view;
-        this._startTime = Date.now();
-        this._lag = 0;
-        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
-        this._view.BindSetDirection(this.SetDirection.bind(this));
-    }
+    
 }
 
 export class AIController extends Controller {
@@ -59,5 +57,17 @@ export class AIController extends Controller {
         console.log(this);
         this.bot.MakeDecision(this._model);
         super.Update();
+    }
+
+    Restart(model, view, bot){
+        console.log("Restarting game");
+        this._model = model || new Model();
+        this.bot = bot || new Bot(this._model);
+        this._view = view || new AIView(this.bot);
+        this._startTime = Date.now();
+        this._lag = 0;
+        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
+        this._model.BindRestart(this.Restart.bind(this));
+        this._view.BindSetDirection(this.SetDirection.bind(this));
     }
 }

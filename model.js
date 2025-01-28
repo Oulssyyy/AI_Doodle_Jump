@@ -119,6 +119,10 @@ export default class Model {
         this.b_Display = callback;
     }
 
+    BindRestart(callback) {
+        this.b_Restart = callback;
+    }
+
     Move(fps) {
 
         this.UpdatePlatforms(fps);
@@ -146,13 +150,14 @@ export default class Model {
         if (this._position.y > 600) {
             // Player loses the game
             const urlParams = new URLSearchParams(window.location.search);
-            let text = "Perdu ! Skibidi toilet sigma score : " + this._score + ". Click OK to restart."
-            if(urlParams.get('mode') === 'china'){
-                text = "失败了！社会信用：" + this._score + "。点击确定重新开始。"
-            }
-            if (confirm(text)) {
-                this.Restart();
-            }
+            // let text = "Perdu ! Skibidi toilet sigma score : " + this._score + ". Click OK to restart."
+            // if(urlParams.get('mode') === 'china'){
+            //     text = "失败了！社会信用：" + this._score + "。点击确定重新开始。"
+            // }
+            // if (confirm(text)) {
+            //     location.reload();
+            // }
+            this.Restart();
 
 
         
@@ -175,11 +180,12 @@ export default class Model {
     }
 
     Restart() {
-        console.log('Restart Model');
-        this._position = { x: 0, y: 300 };
-        this._gravitySpeed = 40;
-        this._direction = 0;
-        this._platforms = [{ x: 0, y: 300, height: 50, width: 300, type: 'basic' }];
-        this._score = 0;
+        // console.log('Restart Model');
+        // this._position = { x: 0, y: 300 };
+        // this._gravitySpeed = 40;
+        // this._direction = 0;
+        // this._platforms = [{ x: 0, y: 300, height: 50, width: 300, type: 'basic' }];
+        // this._score = 0;
+        this.b_Restart();
     }
 }
