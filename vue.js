@@ -65,8 +65,8 @@ export class View {
     }
 
     Display(position, platforms, score) {
-        // console.log('position:', position.y);
-        // console.log('platforms:', platforms);
+        // ('position:', position.y);
+        // ('platforms:', platforms);
 
         const img = new Image();
         img.src = './assets/skibidi.png'; 
@@ -158,7 +158,7 @@ export class View {
     }
 
     Restart() {
-        console.log('Restart view');
+        ('Restart view');
         this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         //this.ctx.clearCanvas();
         
@@ -166,10 +166,16 @@ export class View {
 }
 
 export class AIView extends View {
-    constructor(bot) {
+    constructor(canvas, bot) {
         super();
+        this._canvas = canvas;
+        this.ctx     = canvas.getContext('2d');
         this.bot = bot;
     }
+
+    // Events() {
+    //     // does nothing
+    // }
 
     Display(position, platforms, score) {
         super.Display(position, platforms, score);
@@ -178,7 +184,10 @@ export class AIView extends View {
             this.bot.FourClosestPlatforms();
         }
 
-        console.log(this.bot.fourClosestPlatforms.length);
+        (this.bot.fourClosestPlatforms.length);
+        
+        console.log('nig');
+        
         
         this.ctx.lineWidth = 5;
 
@@ -188,6 +197,8 @@ export class AIView extends View {
                 continue;
             }
             this.ctx.beginPath();
+            console.log(position, platform);
+            
             this.ctx.moveTo(position.x, position.y);
             this.ctx.lineTo(platform.x, platform.y);
             this.ctx.strokeStyle = [ 'red', 'yellow', 'blue', 'green' ][i];

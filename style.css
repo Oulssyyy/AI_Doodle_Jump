@@ -1,6 +1,5 @@
 /* Style général */
 html, body {
-    height: 100vh;
     margin: 0;
     padding: 0;
 }
@@ -19,6 +18,17 @@ body {
     justify-content: center;
     align-items: center;
     gap: 50px;
+}
+
+#ai-container {
+    display: flex;
+    gap: 50px;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+#ai-container > * {
+    zoom: 40%;
 }
 
 .btn {

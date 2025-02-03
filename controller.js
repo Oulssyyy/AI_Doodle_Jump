@@ -44,7 +44,15 @@ export class Controller {
         requestAnimationFrame(this.Update.bind(this)); // La fonction de rappel est généralement appelée 60 fois par seconde.
     }
 
-    
+    Restart(model, view){
+        ("Restarting game");
+        this._model = model;
+        this._view = view;
+        this._startTime = Date.now();
+        this._lag = 0;
+        this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
+        this._view.BindSetDirection(this.SetDirection.bind(this));
+    }
 }
 
 export class AIController extends Controller {
@@ -54,7 +62,7 @@ export class AIController extends Controller {
     }
 
     Update() {
-        console.log(this);
+        (this);
         this.bot.MakeDecision(this._model);
         super.Update();
     }

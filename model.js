@@ -51,7 +51,7 @@ export default class Model {
         let difficulty = this._score / 10000;
         let x = difficulty*10;
         let defaultGenRange = { min: Math.min(230, 20 + difficulty*10), max: Math.min(250, Math.max(100, (x^(3/2))+100)) };
-        console.log('difficulty : ', difficulty,  'genrange :',defaultGenRange);
+        ('difficulty : ', difficulty,  'genrange :',defaultGenRange);
         let typeProbability = Math.max(0.1, 0.75 - difficulty * 0.1);
     
         while (currentYGeneration > Model.MIN_Y_PLATFORM_BUFFER) {
@@ -73,6 +73,8 @@ export default class Model {
     
             this._platforms.push(nextPlatform);
             currentYGeneration = nextY;
+
+            this._platforms.filter(el => el.y < 650)
         }
     }
     
@@ -180,12 +182,11 @@ export default class Model {
     }
 
     Restart() {
-        // console.log('Restart Model');
-        // this._position = { x: 0, y: 300 };
-        // this._gravitySpeed = 40;
-        // this._direction = 0;
-        // this._platforms = [{ x: 0, y: 300, height: 50, width: 300, type: 'basic' }];
-        // this._score = 0;
-        this.b_Restart();
+        ('Restart Model');
+        this._position = { x: 0, y: 300 };
+        this._gravitySpeed = 40;
+        this._direction = 0;
+        this._platforms = [{ x: 0, y: 300, height: 50, width: 300, type: 'basic' }];
+        this._score = 0;
     }
 }

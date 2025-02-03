@@ -5,20 +5,31 @@ import { AIController } from "./controller.js";
 export class Bot {
     constructor(model, neuralNetwork) {
         this.fourClosestPlatforms = null;
+        this.fourClosestPlatformsNormalized = null;
         this.neuralNetwork = neuralNetwork;
         this.model = model;
     }
 
     MakeDecision() {
         this.FourClosestPlatforms();
-        let entryVector = [...this.fourClosestPlatforms, (this.model.position.x * 2 + Model.PLAYER_WIDTH), this.model.position.y + Model.PLAYER_HEIGHT];
-        // let result = [ entryVector,  ...this.neuralNetwork ].reduce((a, b) => b.Calculate(a))
+        let entryVector = [...this.fourClosestPlatforms, (this.model.position.x * 2 + Model.PLAYER_WIDTH) / 300, (this.model.position.y + Model.PLAYER_HEIGHT) / 600].map(el => [el]);
 
-        // return -1, 0 or 1 to chose left, no-direction or right direction
-        // return result.indexOf(Math.max(result)) - 1;
+        (entryVector);
+        
+        let result = [ entryVector,  ...this.neuralNetwork ].reduce((a, b) => b.Calculate(a))
 
-        // default
-        return 0;
+        let maxIndex = 0;
+        let max = result[0];
+
+        for (let i = 0; i  < result.length; i++) {
+            if (result[i] > max) {
+                maxIndex = i;
+                max = result[i];
+            }
+        }
+
+        // -1, 0 or 1 to chose left, no-direction or right direction
+        this.model.direction =  maxIndex - 1;
     }
 
     FourClosestPlatforms() {
@@ -35,17 +46,23 @@ export class Bot {
                 return classifier(doodleCenter, platformCenter);
             }).map(platform => {
                 let platformCenter = { x: (platform.x * 2 + platform.width) / 2, y: platform.y };
-                let dist = (doodleCenter.x - platformCenter.x) * (doodleCenter.x - platformCenter.x) + ((doodleCenter.y - platformCenter.y) * (doodleCenter.y - platformCenter.y));
+                let dist = ((doodleCenter.x - platformCenter.x)) * ((doodleCenter.x - platformCenter.x)) + (((doodleCenter.y - platformCenter.y)) * ((doodleCenter.y - platformCenter.y)));
                 return { ...platform, dist: dist };
             }).sort((a, b) => a.dist - b.dist)[0];
         }
 
         this.fourClosestPlatforms = [
-            classify(doodleCenter, topLeftCondition),
-            classify(doodleCenter, topRightCondition),
-            classify(doodleCenter, bottomRightCondition),
-            classify(doodleCenter, bottomLeftCondition)
-        ];
+            classify(doodleCenter, topLeftCondition) || -1,
+            classify(doodleCenter, topRightCondition) || -1,
+            classify(doodleCenter, bottomRightCondition) || -1,
+            classify(doodleCenter, bottomLeftCondition) || -1
+        ].map(el => {
+            if (el !== -1) {
+                return el.dist;
+            } else {
+                return el;
+            }
+        });
     }
 }
 
@@ -56,8 +73,12 @@ export class NetworkLayer {
     }
 
     Calculate(entry) {
+        (this);
+        (matrixProduct(this.weights, entry));
+        
+        (this.bias);
         return matrixSum(
-            matrixProduct(entry, this.weights), this.bias
+            matrixProduct(this.weights, entry), this.bias
         );
     }
 
@@ -80,9 +101,9 @@ export class NetworkLayer {
         let bias = new Array(to);
 
         for (let i = 0; i < to; i++) {
-            bias = Math.random() * 2 - 1.0;
+            bias[i] = [Math.random() * 2 - 1.0];
         }
-        
+
         return new NetworkLayer(weights, bias);
     }
 }

@@ -9,7 +9,11 @@
 <body>
     <audio id="ost-secret" loop></audio>
 
-    <div class="container">
+    <div id="ai-container">
+
+    </div>
+
+    <div class="container" id="normal-container">
         <canvas id="my_canvas" width="300" height="600"></canvas>
         <div class="btn" id="play-btn">
             Play
@@ -22,51 +26,61 @@
     </div>
 
     <script defer type="module">
-        import { Controller, AIController } from './controller.js';
-        import { Bot, NetworkLayer } from './ai.js';
-        import Model from './model.js';
-        import { View, AIView } from './vue.js';
-        import randMinMax from './util.js';
+        // AI PART /!\
+        import { GeneticAlgorithm } from './geneticAlgorithm.js';
 
-        const audio = document.getElementById('ost-secret');
-        const muteBtn = document.getElementById('mute-btn');
-        const playBtn = document.getElementById('play-btn');
+        const gen = new GeneticAlgorithm(20);
+        gen.StartLearning();
 
-        audio.src = './assets/song/' + ((t) => t[randMinMax(0, t.length - 1)])([
-            'ost-op'
-        ]) + '.mp3';
+
         
-        const urlParams = new URLSearchParams(window.location.search);
+        // sans AI /!\
 
-        if (urlParams.get('mode') === 'china') {
-            console.log('china');
-            audio.src = './assets/song/ost-mao.mp3';
-            playBtn.textContent = '播放';
-        }
+        // import { Controller, AIController } from './controller.js';
+        // import { Bot, NetworkLayer } from './ai.js';
+        // import Model from './model.js';
+        // import { View, AIView } from './vue.js';
+        // import randMinMax from './util.js';
 
-        muteBtn.addEventListener('click', () => {
-            muteBtn.classList.toggle('muted');
+        // const audio = document.getElementById('ost-secret');
+        // const muteBtn = document.getElementById('mute-btn');
+        // const playBtn = document.getElementById('play-btn');
 
-            if (muteBtn.classList.contains('muted')) {
-                audio.volume = 0;
-            } else {
-                audio.volume = 1;
-            }
-        })
+        // audio.src = './assets/song/' + ((t) => t[randMinMax(0, t.length - 1)])([
+        //     'ost-op'
+        // ]) + '.mp3';
+        
+        // const urlParams = new URLSearchParams(window.location.search);
 
-        const model = new Model();
-        const bot = new Bot(model);
+        // if (urlParams.get('mode') === 'china') {
+        //     ('china');
+        //     audio.src = './assets/song/ost-mao.mp3';
+        //     playBtn.textContent = '播放';
+        // }
+
+        // muteBtn.addEventListener('click', () => {
+        //     muteBtn.classList.toggle('muted');
+
+        //     if (muteBtn.classList.contains('muted')) {
+        //         audio.volume = 0;
+        //     } else {
+        //         audio.volume = 1;
+        //     }
+        // })
+
+        // const model = new Model();
+        // const bot = new Bot(model);
 
 
-        const app = new AIController(model, new AIView(bot), bot);
-        playBtn.addEventListener('click', () => {
-            app.Update();
-            audio.play();
-        })
+        // const app = new Controller(model, new View(), bot);
+        // playBtn.addEventListener('click', () => {
+        //     app.Update();
+        //     audio.play();
+        // })
 
-        document.getElementById('restart-btn').addEventListener('click', () => {
-            app.Restart(new Model(), new View());
-        })
+        // document.getElementById('restart-btn').addEventListener('click', () => {
+        //     app.Restart(new Model(), new View());
+        // })
 
     </script>
 </body>

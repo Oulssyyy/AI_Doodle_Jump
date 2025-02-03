@@ -1,10 +1,12 @@
 export const randMinMax  = (min, max) => min + parseInt((Math.random() * (max - min + 1)));
 
 export const matrixSum = (a, b) => {
-    let c = a;
+    let c = [...a];
+    (a, b);  
+    
     for (let i = 0; i < c.length; i++) {
         for (let j = 0; j < c[0].length; j++) {
-            c[i][j] += b[i][j]
+            c[i][j] += b[i][j] 
         }
     }
     return c;
@@ -21,12 +23,16 @@ export const matrixProduct = (a, b) => {
     // Initialisation de la matrice résultante avec des zéros
     const result = Array.from({ length: rowsA }, () => Array(colsB).fill(0));
 
+    ('result');
+    (result);
+    
+
     // Calcul du produit matriciel
     for (let i = 0; i < rowsA; i++) {
         for (let j = 0; j < colsB; j++) {
-        for (let k = 0; k < colsA; k++) {
-            result[i][j] += a[i][k] * b[k][j];
-        }
+            for (let k = 0; k < colsA; k++) {
+                result[i][j] += a[i][k] * b[k][j];
+            }
         }
     }
 
