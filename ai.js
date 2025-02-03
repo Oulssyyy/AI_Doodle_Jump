@@ -106,4 +106,26 @@ export class NetworkLayer {
 
         return new NetworkLayer(weights, bias);
     }
+
+    // return a network layer where every coefficient of the weights matrix and bias vector is the avg between A and B ones
+    static MergeNetworkLayer(A, B) {
+        let weights = new Array(A.weights.length);
+        for (let i = 0; i < A.weights.length; i++) {
+            weights[i] = new Array(A.weights[i].length);
+        }
+
+        for (let i = 0; i < A.weights.length; i++) {
+            for (let j = 0; j < A.weights[i].length; j++) {
+                weights[i][j] = (A.weights[i][j] + B.weights[i][j]) / 2;
+            }
+        }
+
+        let bias = new Array(A.bias.length);
+
+        for (let i = 0; i < A.bias.length; i++) {
+            bias[i] = [(A.bias[i][0] + B.bias[i][0]) / 2];
+        }
+
+        return new NetworkLayer(weights, bias);
+    }
 }

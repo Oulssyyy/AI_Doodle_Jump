@@ -17,6 +17,8 @@ export default class Model {
             { x: 0, y: 300, height: 50, width: 300,  type: 'basic' },
         ];
         this._score = 0;
+        this._scoreSince = 0;
+        this._loose = false;
     }
 
     get position() {
@@ -39,6 +41,14 @@ export default class Model {
         return this._score;
     }
 
+    get scoreSince(){
+        return this._scoreSince;
+    }
+
+    get loose(){
+        return this._loose
+    }
+
     set score(value) {
         return this._score = value;
     }
@@ -51,7 +61,7 @@ export default class Model {
         let difficulty = this._score / 10000;
         let x = difficulty*10;
         let defaultGenRange = { min: Math.min(230, 20 + difficulty*10), max: Math.min(250, Math.max(100, (x^(3/2))+100)) };
-        ('difficulty : ', difficulty,  'genrange :',defaultGenRange);
+        //('difficulty : ', difficulty,  'genrange :',defaultGenRange);
         let typeProbability = Math.max(0.1, 0.75 - difficulty * 0.1);
     
         while (currentYGeneration > Model.MIN_Y_PLATFORM_BUFFER) {
@@ -136,9 +146,13 @@ export default class Model {
             let delta = Model.MIN_PLAYER_Y - this._position.y;
             this._position.y += delta;
             this._score += Math.round(delta);
+            this._scoreSince = 0;
             for (let platform of this._platforms) {
                 platform.y += delta;
             }
+        }
+        else{
+            this._scoreSince++;
         }
 
         this._position.x += this._direction * Model.SPEED / fps;
@@ -151,7 +165,7 @@ export default class Model {
 
         if (this._position.y > 600) {
             // Player loses the game
-            const urlParams = new URLSearchParams(window.location.search);
+            //const urlParams = new URLSearchParams(window.location.search);
             // let text = "Perdu ! Skibidi toilet sigma score : " + this._score + ". Click OK to restart."
             // if(urlParams.get('mode') === 'china'){
             //     text = "失败了！社会信用：" + this._score + "。点击确定重新开始。"
@@ -159,8 +173,8 @@ export default class Model {
             // if (confirm(text)) {
             //     location.reload();
             // }
-            this.Restart();
-
+            //this.Restart();
+            this._loose = true;
 
         
         }

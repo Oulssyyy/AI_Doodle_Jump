@@ -186,8 +186,6 @@ export class AIView extends View {
 
         (this.bot.fourClosestPlatforms.length);
         
-        console.log('nig');
-        
         
         this.ctx.lineWidth = 5;
 
@@ -197,7 +195,6 @@ export class AIView extends View {
                 continue;
             }
             this.ctx.beginPath();
-            console.log(position, platform);
             
             this.ctx.moveTo(position.x, position.y);
             this.ctx.lineTo(platform.x, platform.y);

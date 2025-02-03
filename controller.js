@@ -25,7 +25,7 @@ export class Controller {
         this._model.direction = newDirection;
     }
     
-    Update() {
+    async Update(condition = (() => true)) {
         /* Calcul du deltaTime */
         let currentTime = Date.now();
         let deltaTime   = currentTime - this._startTime; // La durée entre deux appels (entre 2 frames).
@@ -41,7 +41,12 @@ export class Controller {
             this._lag -= this._frameDuration;
         }
         
-        requestAnimationFrame(this.Update.bind(this)); // La fonction de rappel est généralement appelée 60 fois par seconde.
+        if (condition()) {
+            requestAnimationFrame(this.Update.bind(this)); // La fonction de rappel est généralement appelée 60 fois par seconde.
+        } else {
+            console.log('partie finie');
+            return;
+        }
     }
 
     Restart(model, view){
@@ -56,15 +61,26 @@ export class Controller {
 }
 
 export class AIController extends Controller {
-    constructor(model, view, bot) {
+    constructor(model, view, bot, callback) {
         super(model, view)
         this.bot = bot;
+        this.callback = callback;
     }
 
     Update() {
         (this);
         this.bot.MakeDecision(this._model);
-        super.Update();
+        super.Update(() => !this.CheckLoseOrBlocked());
+    }
+
+    CheckLoseOrBlocked() {
+        if (this._model.scoreSince > 1000 || this._model.loose) {
+            this.callback();
+            // console.log('fini');
+            
+            return true;
+        }
+        return false;
     }
 
     Restart(model, view, bot){
