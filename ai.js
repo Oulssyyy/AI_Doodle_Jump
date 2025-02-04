@@ -73,10 +73,10 @@ export class NetworkLayer {
     }
 
     Calculate(entry) {
-        (this);
+        //(this);
         (matrixProduct(this.weights, entry));
         
-        (this.bias);
+        //(this.bias);
         return matrixSum(
             matrixProduct(this.weights, entry), this.bias
         );

@@ -5,51 +5,68 @@ import { View, AIView } from './vue.js';
 import randMinMax from './util.js';
 
 export class GeneticAlgorithm {
-    constructor(numberOfInstances, numberOfGoodInstances, updateChart) {
+    constructor(numberOfInstances, numberOfGoodInstances, localStorageData, updateChart) {
         this.numberOfGoodInstances = numberOfGoodInstances // indicates the number of instance we keep from each generation
         this.numberOfInstances = numberOfInstances;
         this.instances = [];
-        this.bestScores = [];
-        this.generation = 0;
+        this.bestScores = localStorageData?.bestScores || [[0,0,0]];
+        this.generation = localStorageData?.generation || 0;
         this.updateChart = updateChart;
     }
 
-    InstanceEnded() {
-        if (this.instances.filter(el => !el.lose).length === 0) {
-            this.generation++;
-            const orderedInstances = this.instances.sort((a, b) => b.score - a.score);
-        
-            const bestScore = orderedInstances[0].score;
-            console.log('best score = ' + bestScore);
-            
-            const keepingNeuralNetworks = orderedInstances.slice(this.numberOfGoodInstances).map(el => el.bot.neuralNetwork);
-            const newNeuralNetworks = [];
-            
-            this.bestScores.push(this.generation, bestScore);
+InstanceEnded() {
+    if (this.instances.filter(el => !el.lose).length === 0) {
+        this.generation++;
 
-            //this.updateChart(this.bestScores);
-            
-            for (const el of orderedInstances.slice(this.numberOfGoodInstances + 1, orderedInstances.length)) {
-                // console.log(el);
-                // console.log(keepingNeuralNetworks);
-                
-                const newNeuralNetwork = [];
-                const A = el.bot.neuralNetwork;
-                const B = keepingNeuralNetworks[randMinMax(0, keepingNeuralNetworks.length - 1)];
+        // Trier les instances par score décroissant
+        const orderedInstances = this.instances.sort((a, b) => b.score - a.score);
 
-                for (let i = 0; i < A.length; i++) {
-                    newNeuralNetwork.push(NetworkLayer.MergeNetworkLayer(A[i], B[i]));
-                }
+        const bestScore = orderedInstances[0].score;
+        const averageScore = orderedInstances.reduce((acc, el) => acc + el.score, 0) / orderedInstances.length;
+        console.log('best score = ' + bestScore);
 
-                newNeuralNetworks.push(newNeuralNetwork);
-                this.instances = [];
-                this.Learning([...keepingNeuralNetworks, ...newNeuralNetworks]);
-                console.log("C'est repartie pour un tour !");
+        const totalInstances = this.instances.length;
+
+        const keepingNeuralNetworks = orderedInstances
+            .slice(0, this.numberOfGoodInstances)
+            .map(el => el.bot.neuralNetwork);
+
+        const newNeuralNetworks = [];
+
+        const nbNewNetworks = totalInstances - keepingNeuralNetworks.length;
+
+        for (let i = 0; i < nbNewNetworks; i++) {
+            const parentA = keepingNeuralNetworks[randMinMax(0, keepingNeuralNetworks.length - 1)];
+            const parentB = keepingNeuralNetworks[randMinMax(0, keepingNeuralNetworks.length - 1)];
+
+            const newNeuralNetwork = [];
+            for (let j = 0; j < parentA.length; j++) {
+                newNeuralNetwork.push(NetworkLayer.MergeNetworkLayer(parentA[j], parentB[j]));
             }
-        } else {
-            // console.log('une en moins !');
+
+            newNeuralNetworks.push(newNeuralNetwork);
         }
+
+        this.bestScores.push([this.generation, bestScore, averageScore]);
+
+        this.updateChart(this.bestScores);
+
+        this.instances = [];
+        this.Learning([...keepingNeuralNetworks, ...newNeuralNetworks]);
+
+        localStorage.setItem('geneticData', JSON.stringify({ 
+            generation: this.generation, 
+            bestScores: this.bestScores, 
+            neuralNetworks: [...keepingNeuralNetworks, ...newNeuralNetworks],
+            numberOfGoodInstances: this.numberOfGoodInstances,
+            numberOfInstances: this.numberOfInstances
+        }));
+
+
+        console.log("C'est reparti pour un tour !");
     }
+}
+
 
     StartLearning() {
         document.getElementById('normal-container').style.display = 'none';
@@ -70,16 +87,17 @@ export class GeneticAlgorithm {
     }
 
     Learning(botNeuralNetworks) {
-        // console.log(botNeuralNetworks);
+        console.log(botNeuralNetworks);
         
         const container = document.getElementById('ai-container');
 
         for (const el of container.querySelectorAll('canvas')) {
-            if (canvas.id !== 'normal-container') {
+            if (el.id !== 'normal-container') {
                 container.removeChild(el);
             }
         }
 
+        console.log(botNeuralNetworks.length);
 
         for (let i = 0; i < botNeuralNetworks.length; i++) {
             const canvas = document.createElement('canvas');
@@ -91,6 +109,7 @@ export class GeneticAlgorithm {
             this.instances.push(instance);
             instance.StartPlaying();
         }
+        
     }
 
     
