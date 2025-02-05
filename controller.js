@@ -87,11 +87,10 @@ export class AIController extends Controller {
         console.log("Restarting game");
         this._model = model || new Model();
         this.bot = bot || new Bot(this._model);
-        this._view = view || new AIView(this.bot);
+        this._view = view || new AIView(this.bot, this._model);
         this._startTime = Date.now();
         this._lag = 0;
         this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
         this._model.BindRestart(this.Restart.bind(this));
-        this._view.BindSetDirection(this.SetDirection.bind(this));
     }
 }

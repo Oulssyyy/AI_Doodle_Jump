@@ -64,26 +64,15 @@ export class View {
         }
     }
 
-    Display(position, platforms, score) {
+    Display(position, platforms, score, aiDirection) {
         // ('position:', position.y);
         // ('platforms:', platforms);
 
         const img = new Image();
         img.src = './assets/skibidi.png'; 
 
-        const img2 = new Image();
-        img2.src = './assets/social_credit_up.png';
-
         const background = new Image();
         background.src = './assets/night_sky.png';
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('mode') === 'china') {
-            img.src = './assets/mao.png';
-            background.src = './assets/chinese_sky.jpg';
-        }
-        
-        
 
         const basicPlatform = new Image();
         basicPlatform.src = './assets/normal_platform.png';
@@ -94,7 +83,6 @@ export class View {
 
         Promise.all([
             img.decode(), 
-            img2.decode(), 
             background.decode(), 
             basicPlatform.decode(), 
             oneTimePlatform.decode(), 
@@ -119,13 +107,14 @@ export class View {
                 //this.ctx.fillRect(platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
             }
 
-            if(this._hold_right && !this._hold_left && this.imageDirection != 1) {
-                this.imageDirection = 1;
-            } else if(this._hold_left && !this._hold_right && this.imageDirection != -1) {
-                this.imageDirection = -1;
+            if(aiDirection === undefined){
+                if(this._hold_right && !this._hold_left && this.imageDirection != 1) {
+                    this.imageDirection = 1;
+                } else if(this._hold_left && !this._hold_right && this.imageDirection != -1) {
+                    this.imageDirection = -1;
+                }
             }
-
-
+            else this.imageDirection = aiDirection;
 
             if (this.imageDirection == -1) {
                 this.ctx.save();
@@ -137,18 +126,9 @@ export class View {
             } else {
                 this.ctx.drawImage(img, x, y, 25, 34);
             }
-
-            if (urlParams.get('mode') === 'china'){
-                this.ctx.drawImage(img2, 220, 5, 70, 40);
-                this.ctx.font = '20px Arial';
-                this.ctx.fillStyle = 'white';
-                this.ctx.fillText('社会信用: ' + score, 10, 30);
-            }
-            else{
-                this.ctx.font = '20px Arial';
-                this.ctx.fillStyle = 'white';
-                this.ctx.fillText('Sigma: ' + score, 10, 30);
-            }
+            this.ctx.font = '20px Arial';
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillText('Sigma: ' + score, 10, 30);
 
             
         }).catch((error) => {
@@ -172,14 +152,17 @@ export class AIView extends View {
         this.ctx     = canvas.getContext('2d');
         this.bot = bot;
         this.drawVector = drawVector;
+        this.model = model;
+        //this.aiDirection = ;
     }
 
-    // Events() {
-    //     // does nothing
-    // }
+    Events() {
+
+    }
+
 
     Display(position, platforms, score) {
-        super.Display(position, platforms, score);
+        super.Display(position, platforms, score, this.model.direction);
 
         if (this.bot.fourClosestPlatforms == null) {
             this.bot.FourClosestPlatforms();
