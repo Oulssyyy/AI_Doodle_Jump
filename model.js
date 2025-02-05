@@ -165,18 +165,7 @@ export default class Model {
 
         if (this._position.y > 600) {
             // Player loses the game
-            //const urlParams = new URLSearchParams(window.location.search);
-            // let text = "Perdu ! Skibidi toilet sigma score : " + this._score + ". Click OK to restart."
-            // if(urlParams.get('mode') === 'china'){
-            //     text = "失败了！社会信用：" + this._score + "。点击确定重新开始。"
-            // }
-            // if (confirm(text)) {
-            //     location.reload();
-            // }
-            //this.Restart();
             this._loose = true;
-
-        
         }
         
 

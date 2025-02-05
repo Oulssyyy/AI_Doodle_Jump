@@ -18,7 +18,6 @@ InstanceEnded() {
     if (this.instances.filter(el => !el.lose).length === 0) {
         this.generation++;
 
-        // Trier les instances par score décroissant
         const orderedInstances = this.instances.sort((a, b) => b.score - a.score);
 
         const bestScore = orderedInstances[0].score;
@@ -126,7 +125,7 @@ class GeneticBotInstance {
         this.neuralNetwork = neuralNetwork;
         this.bot = new Bot(this.model, this.neuralNetwork);
         this.owner = owner;
-        this.controller = new AIController(this.model, new AIView(canvas, this.bot), this.bot, ()=>{this.InstanceEnded()});
+        this.controller = new AIController(this.model, new AIView(canvas, this.bot, this.model), this.bot, ()=>{this.InstanceEnded()});
     }
 
     InstanceEnded() {
