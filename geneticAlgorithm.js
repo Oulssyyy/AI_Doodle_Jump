@@ -5,13 +5,14 @@ import { View, AIView } from './vue.js';
 import randMinMax from './util.js';
 
 export class GeneticAlgorithm {
-    constructor(numberOfInstances, numberOfGoodInstances, localStorageData, updateChart) {
+    constructor(numberOfInstances, numberOfGoodInstances, localStorageData, updateChart, drawVector = false) {
         this.numberOfGoodInstances = numberOfGoodInstances // indicates the number of instance we keep from each generation
         this.numberOfInstances = numberOfInstances;
         this.instances = [];
         this.bestScores = localStorageData?.bestScores || [[0,0,0]];
         this.generation = localStorageData?.generation || 0;
         this.updateChart = updateChart;
+        this.drawVector = drawVector;
     }
 
 InstanceEnded() {
@@ -80,7 +81,7 @@ InstanceEnded() {
             canvas.height = 600;
             container.appendChild(canvas);
             
-            const instance = new GeneticBotInstance(canvas, this);
+            const instance = new GeneticBotInstance(canvas, this, this.drawVector);
             this.instances.push(instance);
             instance.StartPlaying();
         }
@@ -105,7 +106,7 @@ InstanceEnded() {
             canvas.height = 600;
             container.appendChild(canvas);
             
-            const instance = new GeneticBotInstance(canvas, this, botNeuralNetworks[i]);
+            const instance = new GeneticBotInstance(canvas, this, this.drawVector,  botNeuralNetworks[i]);
             this.instances.push(instance);
             instance.StartPlaying();
         }
@@ -116,7 +117,7 @@ InstanceEnded() {
 }
 
 class GeneticBotInstance {
-    constructor(canvas, owner, neuralNetwork = [
+    constructor(canvas, owner, drawVector = false, neuralNetwork = [
         NetworkLayer.InitiateRandom(6, 4),
         NetworkLayer.InitiateRandom(4, 3)
     ]) {
@@ -126,7 +127,8 @@ class GeneticBotInstance {
         this.neuralNetwork = neuralNetwork;
         this.bot = new Bot(this.model, this.neuralNetwork);
         this.owner = owner;
-        this.controller = new AIController(this.model, new AIView(canvas, this.bot), this.bot, ()=>{this.InstanceEnded()});
+        this.drawVector = drawVector;
+        this.controller = new AIController(this.model, new AIView(canvas, this.bot, drawVector = this.drawVector), this.bot, ()=>{this.InstanceEnded()});
     }
 
     InstanceEnded() {

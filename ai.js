@@ -12,7 +12,7 @@ export class Bot {
 
     MakeDecision() {
         this.FourClosestPlatforms();
-        let entryVector = [...this.fourClosestPlatforms, (this.model.position.x * 2 + Model.PLAYER_WIDTH) / 300, (this.model.position.y + Model.PLAYER_HEIGHT) / 600].map(el => [el]);
+        let entryVector = [...this.fourClosestPlatforms.map(el => el.dist), (this.model.position.x * 2 + Model.PLAYER_WIDTH) / 300, (this.model.position.y + Model.PLAYER_HEIGHT) / 600].map(el => [el]);
 
         (entryVector);
         
@@ -58,7 +58,7 @@ export class Bot {
             classify(doodleCenter, bottomLeftCondition) || -1
         ].map(el => {
             if (el !== -1) {
-                return el.dist;
+                return { ...el, dist: el.dist};
             } else {
                 return el;
             }

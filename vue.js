@@ -166,11 +166,12 @@ export class View {
 }
 
 export class AIView extends View {
-    constructor(canvas, bot) {
+    constructor(canvas, bot,  drawVector = false) {
         super();
         this._canvas = canvas;
         this.ctx     = canvas.getContext('2d');
         this.bot = bot;
+        this.drawVector = drawVector;
     }
 
     // Events() {
@@ -187,19 +188,23 @@ export class AIView extends View {
         (this.bot.fourClosestPlatforms.length);
         
         
-        this.ctx.lineWidth = 5;
+        if (this.drawVector) {
+            this.ctx.lineWidth = 5;
+        
 
         for (let i = 0; i < this.bot.fourClosestPlatforms.length; i++) {
-            const platform = this.bot.fourClosestPlatforms[i];
-            if(platform === undefined) {
-                continue;
+                const platform = this.bot.fourClosestPlatforms[i];
+                
+                if(platform === undefined) {
+                    continue;
+                }
+                this.ctx.beginPath();
+                
+                this.ctx.moveTo(position.x, position.y);
+                this.ctx.lineTo(platform.x, platform.y);
+                this.ctx.strokeStyle = [ 'red', 'yellow', 'blue', 'green' ][i];
+                this.ctx.stroke();
             }
-            this.ctx.beginPath();
-            
-            this.ctx.moveTo(position.x, position.y);
-            this.ctx.lineTo(platform.x, platform.y);
-            this.ctx.strokeStyle = [ 'red', 'yellow', 'blue', 'green' ][i];
-            this.ctx.stroke();
         }
     }
 }
