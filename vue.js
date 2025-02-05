@@ -146,7 +146,7 @@ export class View {
 }
 
 export class AIView extends View {
-    constructor(canvas, bot,  drawVector = false) {
+    constructor(canvas, bot, model, drawVector = false) {
         super();
         this._canvas = canvas;
         this.ctx     = canvas.getContext('2d');
