@@ -27,24 +27,31 @@ export class Controller {
     
     async Update(condition = (() => true)) {
         /* Calcul du deltaTime */
+
+        if(typeof condition !== 'function' ){
+            condition = () => !this._model.loose
+        }
+
         let currentTime = Date.now();
         let deltaTime   = currentTime - this._startTime; // La durée entre deux appels (entre 2 frames).
         
         this._lag += deltaTime;
         this._startTime = currentTime;
 
-        /* Mettre à jour la logique si la variable _lag est supérieure ou égale à la durée d'une frame */
-        while (this._lag >= this._frameDuration) {
-            /* Mise à jour de la logique */
+        while (this._lag >= this._frameDuration) {            
             this._model.Move(this._fps);
-            /* Réduire la variable _lag par la durée d'une frame */
             this._lag -= this._frameDuration;
         }
-        
+
         if (condition()) {
             requestAnimationFrame(this.Update.bind(this)); // La fonction de rappel est généralement appelée 60 fois par seconde.
         } else {
             console.log('partie finie');
+            const looseDiv = document.getElementById('loose-text')
+            const urlParams = new URLSearchParams(window.location.search);
+            if(looseDiv && !(urlParams.get('mode')?.toLowerCase() === 'ia' || urlParams.get('mode')?.toLowerCase() === 'ai')){
+                looseDiv.textContent = "u bad sigma score : " + this._model.score
+            }
             return;
         }
     }
@@ -57,6 +64,9 @@ export class Controller {
         this._lag = 0;
         this._model.BindDisplay(this.Display.bind(this, this._model.position, this._model.platforms, this._model.score));
         this._view.BindSetDirection(this.SetDirection.bind(this));
+        const looseDiv = document.getElementById('loose-text')
+        if(looseDiv) looseDiv.textContent = ''
+        this.Update()
     }
 }
 

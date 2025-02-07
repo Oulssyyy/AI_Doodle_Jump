@@ -18,88 +18,95 @@
 
     <div class="container" id="normal-container">
         <canvas id="my_canvas" width="300" height="600"></canvas>
+        <div class="loose" id="loose-text"></div>
+        <div class="btn" id="play-btn">Play</div>
 
         <div class="btn" id="mute-btn">Mute</div>
+        <div class="btn" id="restart-btn">Restart</div>
     </div>
     
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <script defer type="module">
         // AI PART /!\
+
+        
         import { GeneticAlgorithm } from './geneticAlgorithm.js';
+        import { Controller, AIController } from './controller.js';
+        import { Bot, NetworkLayer } from './ai.js';
+        import Model from './model.js';
+        import { View, AIView } from './vue.js';
+        import randMinMax from './util.js';
 
-        google.charts.load('current', { packages: ['corechart'] });
-        google.charts.setOnLoadCallback(drawChart);
+        const urlParams = new URLSearchParams(window.location.search);
 
-        function drawChart(dataArray = [[0, 0, 0]]) {
+        if (urlParams.get('mode')?.toLowerCase() === 'ia' || urlParams.get('mode')?.toLowerCase() === 'ai') {
+            google.charts.load('current', { packages: ['corechart'] });
+            google.charts.setOnLoadCallback(drawChart);
 
-            if (!Array.isArray(dataArray) || !dataArray.every(row => Array.isArray(row) && row.length === 3)) {
-                console.error("Format de données invalide :", dataArray);
-                return;
+            function drawChart(dataArray = [[0, 0, 0]]) {
+
+                if (!Array.isArray(dataArray) || !dataArray.every(row => Array.isArray(row) && row.length === 3)) {
+                    console.error("Format de données invalide :", dataArray);
+                    return;
+                }
+
+                const data = new google.visualization.DataTable();
+                data.addColumn('number', 'Génération');
+                data.addColumn('number', 'Score Maximal');
+                data.addColumn('number', 'Score Moyen');
+
+                data.addRows(dataArray);
+
+                const options = {
+                    title: 'Évolution du score en fonction des générations',
+                    curveType: 'function',
+                    legend: { position: 'bottom' },
+                    hAxis: { title: 'Générations' },
+                    vAxis: { title: 'Score' },
+                    colors: ['#FF0000', '#0000FF']
+                };
+
+                const chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
             }
 
-            const data = new google.visualization.DataTable();
-            data.addColumn('number', 'Génération');
-            data.addColumn('number', 'Score Maximal');
-            data.addColumn('number', 'Score Moyen');
 
-            data.addRows(dataArray);
+            var localStroageData = JSON.parse(localStorage.getItem('geneticData'));
 
-            const options = {
-                title: 'Évolution du score en fonction des générations',
-                curveType: 'function',
-                legend: { position: 'bottom' },
-                hAxis: { title: 'Générations' },
-                vAxis: { title: 'Score' },
-                colors: ['#FF0000', '#0000FF']
-            };
+            var gen
 
-            const chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
+            if(/*localStorageData*/false) {
+                gen = new GeneticAlgorithm(localStroageData.numberOfInstances, localStroageData.numberOfGoodInstances, localStroageData, (newData) => {
+                    drawChart(newData);
+                });
+                gen.Learning(localStroageData.neuralNetworks);
+            }else{
+                gen = new GeneticAlgorithm(30, 10, null, (newData) => {
+                    drawChart(newData);
+                }, false);
+                gen.StartLearning();
+            }
+
+        } else {
+            const playBtn = document.getElementById('play-btn');
+            const model = new Model();
+            const bot = new Bot(model);
+            const app = new Controller(model, new View(), bot);
+            playBtn.addEventListener('click', () => {
+                app.Update();
+                //audio.play();
+            })
+
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                app.Restart(new Model(), new View());
+            })
         }
 
-
-        var localStroageData = JSON.parse(localStorage.getItem('geneticData'));
-
-        var gen
-
-        if(/*localStorageData*/false) {
-            gen = new GeneticAlgorithm(localStroageData.numberOfInstances, localStroageData.numberOfGoodInstances, localStroageData, (newData) => {
-                drawChart(newData);
-            });
-            gen.Learning(localStroageData.neuralNetworks);
-        }else{
-            gen = new GeneticAlgorithm(30, 10, null, (newData) => {
-                drawChart(newData);
-            }, false);
-            gen.StartLearning();
-        }
-
+       
         
         // sans AI /!\
 
-        // import { Controller, AIController } from './controller.js';
-        // import { Bot, NetworkLayer } from './ai.js';
-        // import Model from './model.js';
-        // import { View, AIView } from './vue.js';
-        // import randMinMax from './util.js';
-
-        // const playBtn = document.getElementById('play-btn');
-
-
-        // const model = new Model();
-        // const bot = new Bot(model);
-
-
-        // const app = new Controller(model, new View(), bot);
-        // playBtn.addEventListener('click', () => {
-        //     app.Update();
-        //     audio.play();
-        // })
-
-        // document.getElementById('restart-btn').addEventListener('click', () => {
-        //     app.Restart(new Model(), new View());
-        // })
 
     </script>
 </body>
