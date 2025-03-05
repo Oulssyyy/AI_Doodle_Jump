@@ -1,6 +1,8 @@
-Groupe : Ulysse HOLZINGER et Tanguy MACE
+Group: Ulysse HOLZINGER and Tanguy MACE
 
-Changements depuis l'oral : 
+Changes since the presentation:
 
-- correction du jeu de base
-- accès à l'entrainement de l'IA en ajoutant ?mode=ai à la fin du lien
+- Fixed the base game
+- Access to AI training by adding ?mode=ai at the end of the link
+
+This is an AI project made in the first year of my engineering school. You can find more details on our [GitHub Pages](https://github.com/ulyss/skibidi_doodle).
